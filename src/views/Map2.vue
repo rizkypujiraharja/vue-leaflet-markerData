@@ -270,7 +270,7 @@ export default {
         `;
       paginateData().data.forEach((item) => {
         contentHtml += `
-            <div class="border border-gray-300 p-3 rounded-sm mb-1">
+            <div class="border border-gray-300 p-3 rounded mb-1">
               <a href="https://google.com" target="_blank"
                 ><div class="font-semibold">${item.name}</div></a
               >
