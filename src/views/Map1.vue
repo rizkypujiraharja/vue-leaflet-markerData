@@ -250,7 +250,22 @@ export default {
       ],
       dataDetail: {},
       markers: [],
+      pagination: {
+        currentPage: 1,
+        perPage: 5,
+      },
     });
+
+    function paginateData() {
+      let { currentPage, perPage } = state.pagination;
+      return {
+        totalData: state.dataDetails.length,
+        data: state.dataDetails.slice(currentPage, currentPage * perPage + 1),
+        currentPage: currentPage,
+        perPage: perPage,
+        totalPage: Math.ceil(state.dataDetails.length / perPage),
+      };
+    }
 
     const show = reactive({
       rightSidebar: false,
@@ -295,6 +310,7 @@ export default {
         })
           .addTo(mapData.map)
           .on("click", function (e) {
+            setPopup(e.target.options.properties);
             showDetail(e);
           });
         state.markers.push(marker);
@@ -304,6 +320,41 @@ export default {
     function showDetail(e) {
       state.dataDetail = e.target.options.properties;
       show.rightSidebar = true;
+    }
+
+    function setPopup(data) {
+      let contentHtml = `
+            <div class="w-72">
+              <span class="text-lg">${data.name}</span>
+            </div>
+        `;
+      paginateData().data.forEach((item) => {
+        contentHtml += `
+            <div class="border border-gray-300 p-3 rounded mb-1">
+              <a href="https://google.com" target="_blank"
+                ><div class="font-semibold">${item.name}</div></a
+              >
+              <div class="text-gray-600">${item.location}</div>
+              <div class="font-bold text-lg text-right text-blue-500">$
+                ${item.price}
+              </div>
+            </div>`;
+      });
+
+      if (paginateData().totalPage > 1) {
+        contentHtml += `
+          <div class="mt-2 text-center">
+            <button class="px-2 focus:outline-none border border-gray-400 rounded-sm">prev</button>
+            ${paginateData().currentPage} of ${paginateData().totalPage} Page
+            <button class="px-2 focus:outline-none border border-gray-400 rounded-sm">next</button>
+          </div>
+        `;
+      }
+
+      L.popup()
+        .setLatLng([data.lat, data.lng])
+        .setContent(contentHtml)
+        .openOn(mapData.map);
     }
 
     return { show, state };
