@@ -1,49 +1,50 @@
 <template>
-  <div
-    v-if="show.rightSidebar"
-    class="h-screen bg-white w-96 absolute right-0 pt-4 px-4 text-gray-800"
-    id="rightSidebar"
-  >
-    <div class="flex">
-      <button
-        class="mr-3 focus:outline-none"
-        @click="show.rightSidebar = !show.rightSidebar"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          class="h-6 text-gray-300"
+  <transition name="fade">
+    <div
+      v-show="show.rightSidebar"
+      class="h-screen bg-white w-96 absolute right-0 pt-4 px-4 text-gray-800"
+      id="rightSidebar"
+    >
+      <div class="flex">
+        <button
+          class="mr-3 focus:outline-none"
+          @click="show.rightSidebar = !show.rightSidebar"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
-      <span class="text-lg">{{ state.dataDetail.name }}</span>
-    </div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            class="h-6 text-gray-300"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+        <span class="text-lg">{{ state.dataDetail.name }}</span>
+      </div>
 
-    <div class="overflow-y-auto mt-3 pr-2" id="rightSidebarContent">
-      <div
-        class="border border-gray-300 p-3 rounded-sm mb-2"
-        v-for="(item, key) in state.dataDetails"
-        :key="key"
-      >
-        <a href="https://google.com" target="_blank"
-          ><div class="font-semibold">{{ item.name }}</div></a
+      <div class="overflow-y-auto mt-3 pr-2" id="rightSidebarContent">
+        <div
+          class="border border-gray-300 p-3 rounded-sm mb-2"
+          v-for="(item, key) in state.dataDetails"
+          :key="key"
         >
-        <p class="text-gray-600">{{ item.location }}</p>
-        <p class="font-bold text-2xl text-right text-blue-500">
-          ${{ item.price }}
-        </p>
+          <a href="https://google.com" target="_blank"
+            ><div class="font-semibold">{{ item.name }}</div></a
+          >
+          <p class="text-gray-600">{{ item.location }}</p>
+          <p class="font-bold text-2xl text-right text-blue-500">
+            ${{ item.price }}
+          </p>
+        </div>
       </div>
     </div>
-  </div>
-
+  </transition>
   <div class="bg-white h-screen" id="map"></div>
 </template>
 
@@ -62,7 +63,7 @@ export default {
         "pk.eyJ1Ijoicml6a3lwdWppcmFoYXJqYSIsImEiOiJjanlzY3B1eWwwa2t3M25zZTdoOHoyYTRuIn0.YhB_LzKqbkkX06APhURm-Q",
       markerIcon: L.icon({
         iconUrl:
-          "https://cdn.icon-icons.com/icons2/1520/PNG/512/homeflat_106039.png",
+          "https://raw.githubusercontent.com/rizkypujiraharja/vue-leaflet-markerData/master/src/assets/house.png",
         iconSize: [30, 30],
       }),
       coordinates: [
@@ -283,6 +284,10 @@ export default {
         }
       ).addTo(mapData.map);
 
+      mapData.map.on("click", function () {
+        show.rightSidebar = false;
+      });
+
       mapData.coordinates.forEach((coordinate) => {
         let marker = L.marker([coordinate.lat, coordinate.lng], {
           icon: mapData.markerIcon,
@@ -331,5 +336,13 @@ export default {
 }
 ::-webkit-scrollbar-thumb:window-inactive {
   background: rgba(0, 0, 0, 0.3);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>
